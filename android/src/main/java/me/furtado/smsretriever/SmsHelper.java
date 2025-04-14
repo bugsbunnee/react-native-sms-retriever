@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 
+import android.os.Build;
+import android.content.Context;
+
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
@@ -57,7 +60,12 @@ final class SmsHelper {
         final IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
 
         try {
-            mContext.registerReceiver(mReceiver, intentFilter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mContext.registerReceiver(mReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+            } else {
+                mContext.registerReceiver(mReceiver, intentFilter);
+            }
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
